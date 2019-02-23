@@ -5,11 +5,16 @@
 (def append-zero (comp (partial take 4) #(concat % (repeat 0))))
 (def transpose (comp (partial apply list) (partial apply mapv list)))
 
-(defn reducer
-  [result list]
-  (merge result (map (partial apply +) (partition-all 2 list))))
+(def remove-zeroes (partial remove zero?))
 
-(def move-left (comp flatten (partial reduce reducer '()) group-by-identity (partial remove zero?)))
+(def group-in-pairs (partial mapcat (partial partition-all 2)))
+
+(def sum-all (partial map (partial apply +)))
+
+(def move-left (comp sum-all
+                     group-in-pairs 
+                     group-by-identity 
+                     remove-zeroes))
 
 ; "Moves an entire grid to the right"
 (def move-grid-right (partial map (comp reverse append-zero move-left)))
